@@ -71,7 +71,7 @@ func (js *JobService) Start() error {
 
 func (js *JobService) performUpload() error {
 
-	err := js.changeJobStatus("ENCODING")
+	err := js.changeJobStatus("UPLOADING")
 	if err != nil {
 		return js.failJob(err)
 	}
