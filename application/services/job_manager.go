@@ -46,9 +46,9 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 		VideoService:  videoService,
 	}
 
-	concurrency, err := strconv.Atoi(os.Getenv("CONCURRENCY_WORKERS"))
+	concurrency, err := strconv.Atoi(os.Getenv("CONCURRENCY_WORKER"))
 	if err != nil {
-		log.Fatalf("error loading var: CONCURRENCY_WORKERS")
+		log.Fatalf("error loading var: CONCURRENCY_WORKER")
 	}
 
 	for processQuantity := 0; processQuantity < concurrency; processQuantity++ {
@@ -71,7 +71,9 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 
 func (jm *JobManager) notifySuccess(jobResult JobWorkerResult, ch *amqp.Channel) error {
 
+	Mutex.Lock()
 	jobJson, err := json.Marshal(jobResult.Job)
+	Mutex.Unlock()
 
 	if err != nil {
 		return err
@@ -93,9 +95,9 @@ func (jm *JobManager) notifySuccess(jobResult JobWorkerResult, ch *amqp.Channel)
 
 func (jm *JobManager) checkParseErrors(jobResult JobWorkerResult) error {
 	if jobResult.Job.ID != "" {
-		log.Printf("messageID #{jobResult.Message.DeliveryTag}. Error passing job #{jobResult.Job.ID}")
+		log.Printf("messageID: %v. Error passing job: %v. Error: %v", jobResult.Message.DeliveryTag, jobResult.Job.ID, jobResult.Error.Error())
 	} else {
-		log.Printf("messageID #{jobResult.Message.DeliveryTag}. Error parsing message #{jobResult.Job.Error}")
+		log.Printf("messageID: %v. Error parsing message: %v", jobResult.Message.DeliveryTag, jobResult.Error)
 	}
 
 	errorMessage := JobNotificationError{
