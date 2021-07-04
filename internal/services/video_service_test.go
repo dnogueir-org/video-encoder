@@ -1,9 +1,9 @@
 package services_test
 
 import (
-	"dnogueir-org/video-encoder/application/services"
 	"dnogueir-org/video-encoder/database"
 	"dnogueir-org/video-encoder/internal/models"
+	"dnogueir-org/video-encoder/internal/services"
 	"dnogueir-org/video-encoder/repository"
 	"log"
 	"testing"
