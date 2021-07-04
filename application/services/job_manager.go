@@ -2,7 +2,7 @@ package services
 
 import (
 	"dnogueir-org/video-encoder/domain"
-	"dnogueir-org/video-encoder/framework/queue"
+	"dnogueir-org/video-encoder/queue"
 	"dnogueir-org/video-encoder/repository"
 	"encoding/json"
 	"log"
