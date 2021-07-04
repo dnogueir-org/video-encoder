@@ -1,9 +1,9 @@
-package repositories_test
+package repository_test
 
 import (
-	"dnogueir-org/video-encoder/application/repositories"
 	"dnogueir-org/video-encoder/domain"
 	"dnogueir-org/video-encoder/framework/database"
+	"dnogueir-org/video-encoder/repository"
 	"testing"
 	"time"
 
@@ -20,7 +20,7 @@ func TestVideoRepositoryDbInsert(t *testing.T) {
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
 
-	repo := repositories.VideoRepositoryDb{Db: db}
+	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
 	v, err := repo.Find(video.ID)

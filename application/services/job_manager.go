@@ -1,9 +1,9 @@
 package services
 
 import (
-	"dnogueir-org/video-encoder/application/repositories"
 	"dnogueir-org/video-encoder/domain"
 	"dnogueir-org/video-encoder/framework/queue"
+	"dnogueir-org/video-encoder/repository"
 	"encoding/json"
 	"log"
 	"os"
@@ -39,10 +39,10 @@ func NewJobManager(db *gorm.DB, rabbitMQ *queue.RabbitMQ, jobReturnChannel chan 
 func (jm *JobManager) Start(ch *amqp.Channel) {
 
 	videoService := NewVideoService()
-	videoService.VideoRepository = repositories.VideoRepositoryDb{Db: jm.Db}
+	videoService.VideoRepository = repository.VideoRepositoryDb{Db: jm.Db}
 
 	jobService := JobService{
-		JobRepository: repositories.JobRepositoryDb{Db: jm.Db},
+		JobRepository: repository.JobRepositoryDb{Db: jm.Db},
 		VideoService:  videoService,
 	}
 

@@ -1,9 +1,9 @@
-package repositories_test
+package repository_test
 
 import (
-	"dnogueir-org/video-encoder/application/repositories"
 	"dnogueir-org/video-encoder/domain"
 	"dnogueir-org/video-encoder/framework/database"
+	"dnogueir-org/video-encoder/repository"
 	"testing"
 	"time"
 
@@ -20,13 +20,13 @@ func TestJobRepositoryDbInsert(t *testing.T) {
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
 
-	repo := repositories.VideoRepositoryDb{Db: db}
+	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
 	job, err := domain.NewJob("output_path", "Pending", video)
 	require.Nil(t, err)
 
-	repoJob := repositories.JobRepositoryDb{Db: db}
+	repoJob := repository.JobRepositoryDb{Db: db}
 	repoJob.Insert(job)
 
 	j, err := repoJob.Find(job.ID)
@@ -45,13 +45,13 @@ func TestJobRepositoryDbUpdate(t *testing.T) {
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
 
-	repo := repositories.VideoRepositoryDb{Db: db}
+	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
 	job, err := domain.NewJob("output_path", "Pending", video)
 	require.Nil(t, err)
 
-	repoJob := repositories.JobRepositoryDb{Db: db}
+	repoJob := repository.JobRepositoryDb{Db: db}
 	repoJob.Insert(job)
 
 	job.Status = "Complete"

@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"dnogueir-org/video-encoder/domain"

@@ -1,10 +1,10 @@
 package services_test
 
 import (
-	"dnogueir-org/video-encoder/application/repositories"
 	"dnogueir-org/video-encoder/application/services"
 	"dnogueir-org/video-encoder/domain"
 	"dnogueir-org/video-encoder/framework/database"
+	"dnogueir-org/video-encoder/repository"
 	"log"
 	"testing"
 	"time"
@@ -21,7 +21,7 @@ func init() {
 	}
 }
 
-func prepare() (*domain.Video, repositories.VideoRepositoryDb) {
+func prepare() (*domain.Video, repository.VideoRepositoryDb) {
 	db := database.NewDbTest()
 	defer db.Close()
 
@@ -30,7 +30,7 @@ func prepare() (*domain.Video, repositories.VideoRepositoryDb) {
 	video.FilePath = "bachianinha.mp4"
 	video.CreatedAt = time.Now()
 
-	repo := repositories.VideoRepositoryDb{Db: db}
+	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
 	return video, repo

@@ -2,8 +2,8 @@ package services
 
 import (
 	"context"
-	"dnogueir-org/video-encoder/application/repositories"
 	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/repository"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,7 +14,7 @@ import (
 
 type VideoService struct {
 	Video           *domain.Video
-	VideoRepository repositories.VideoRepository
+	VideoRepository repository.VideoRepository
 }
 
 func NewVideoService() VideoService {
