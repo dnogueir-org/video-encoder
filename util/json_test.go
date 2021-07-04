@@ -1,7 +1,7 @@
-package utils_test
+package util_test
 
 import (
-	"dnogueir-org/video-encoder/framework/utils"
+	"dnogueir-org/video-encoder/util"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,10 +14,10 @@ func TestIsJson(t *testing.T) {
 		"status": "downloading"
 	}`
 
-	err := utils.IsJson(json)
+	err := util.IsJson(json)
 	require.Nil(t, err)
 
 	json = `leinad`
-	err = utils.IsJson(json)
+	err = util.IsJson(json)
 	require.NotNil(t, err)
 }
