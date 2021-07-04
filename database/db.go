@@ -1,7 +1,7 @@
 package database
 
 import (
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"log"
 
 	"github.com/jinzhu/gorm"
@@ -60,8 +60,8 @@ func (d *Database) Connect() (*gorm.DB, error) {
 	}
 
 	if d.AutoMigrateDb {
-		d.Db.AutoMigrate(&domain.Video{}, &domain.Job{})
-		d.Db.Model(domain.Job{}).AddForeignKey("video_id", "videos (id)", "CASCADE", "CASCADE")
+		d.Db.AutoMigrate(&models.Video{}, &models.Job{})
+		d.Db.Model(models.Job{}).AddForeignKey("video_id", "videos (id)", "CASCADE", "CASCADE")
 	}
 
 	return d.Db, nil

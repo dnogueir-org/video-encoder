@@ -1,8 +1,8 @@
 package services
 
 import (
-	"dnogueir-org/video-encoder/domain"
-	"dnogueir-org/video-encoder/framework/utils"
+	"dnogueir-org/video-encoder/internal/models"
+	"dnogueir-org/video-encoder/util"
 	"encoding/json"
 	"os"
 	"sync"
@@ -13,20 +13,20 @@ import (
 )
 
 type JobWorkerResult struct {
-	Job     domain.Job
+	Job     models.Job
 	Message *amqp.Delivery
 	Error   error
 }
 
 var Mutex = &sync.Mutex{}
 
-func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerResult, jobService JobService, job domain.Job, workerID int) {
+func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerResult, jobService JobService, job models.Job, workerID int) {
 
 	for message := range messageChannel {
 
-		err := utils.IsJson(string(message.Body))
+		err := util.IsJson(string(message.Body))
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
@@ -36,13 +36,13 @@ func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerRe
 		Mutex.Unlock()
 
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
 		err = jobService.VideoService.Video.Validate()
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
@@ -50,7 +50,7 @@ func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerRe
 		err = jobService.VideoService.InsertVideo()
 		Mutex.Unlock()
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
@@ -64,14 +64,14 @@ func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerRe
 		_, err = jobService.JobRepository.Insert(&job)
 		Mutex.Unlock()
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
 		jobService.Job = &job
 		err = jobService.Start()
 		if err != nil {
-			returnChannel <- returnJobResult(domain.Job{}, message, err)
+			returnChannel <- returnJobResult(models.Job{}, message, err)
 			continue
 		}
 
@@ -79,7 +79,7 @@ func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerRe
 	}
 }
 
-func returnJobResult(job domain.Job, message amqp.Delivery, err error) JobWorkerResult {
+func returnJobResult(job models.Job, message amqp.Delivery, err error) JobWorkerResult {
 	result := JobWorkerResult{
 		Job:     job,
 		Message: &message,

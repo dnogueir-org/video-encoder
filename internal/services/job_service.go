@@ -1,16 +1,16 @@
 package services
 
 import (
-	"dnogueir-org/video-encoder/application/repositories"
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
+	"dnogueir-org/video-encoder/repository"
 	"errors"
 	"os"
 	"strconv"
 )
 
 type JobService struct {
-	Job           *domain.Job
-	JobRepository repositories.JobRepository
+	Job           *models.Job
+	JobRepository repository.JobRepository
 	VideoService  VideoService
 }
 

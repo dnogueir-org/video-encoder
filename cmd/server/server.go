@@ -1,9 +1,9 @@
 package main
 
 import (
-	"dnogueir-org/video-encoder/application/services"
-	"dnogueir-org/video-encoder/framework/database"
-	"dnogueir-org/video-encoder/framework/queue"
+	"dnogueir-org/video-encoder/database"
+	"dnogueir-org/video-encoder/internal/services"
+	"dnogueir-org/video-encoder/queue"
 	"log"
 	"os"
 	"strconv"

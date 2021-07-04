@@ -1,7 +1,7 @@
-package domain_test
+package models_test
 
 import (
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"testing"
 	"time"
 
@@ -10,14 +10,14 @@ import (
 )
 
 func TestValidateIfVideoIsEmpty(t *testing.T) {
-	video := domain.NewVideo()
+	video := models.NewVideo()
 	err := video.Validate()
 
 	require.Error(t, err)
 }
 
 func TestVideoIdIsNotUUID(t *testing.T) {
-	video := domain.NewVideo()
+	video := models.NewVideo()
 
 	video.ID = "abc"
 	video.ResourceID = "a"
@@ -29,7 +29,7 @@ func TestVideoIdIsNotUUID(t *testing.T) {
 }
 
 func TestVideoValidation(t *testing.T) {
-	video := domain.NewVideo()
+	video := models.NewVideo()
 
 	video.ID = uuid.NewV4().String()
 	video.ResourceID = "a"

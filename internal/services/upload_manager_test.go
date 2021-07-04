@@ -1,7 +1,7 @@
 package services_test
 
 import (
-	"dnogueir-org/video-encoder/application/services"
+	"dnogueir-org/video-encoder/internal/services"
 	"log"
 	"os"
 	"testing"

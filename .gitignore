@@ -1,1 +1,3 @@
 bucket-credential.json
+.env
+.pgdata
