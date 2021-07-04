@@ -2,7 +2,7 @@ package main
 
 import (
 	"dnogueir-org/video-encoder/application/services"
-	"dnogueir-org/video-encoder/framework/database"
+	"dnogueir-org/video-encoder/database"
 	"dnogueir-org/video-encoder/framework/queue"
 	"log"
 	"os"
