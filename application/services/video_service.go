@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/repository"
 	"io/ioutil"
 	"log"
@@ -13,7 +13,7 @@ import (
 )
 
 type VideoService struct {
-	Video           *domain.Video
+	Video           *models.Video
 	VideoRepository repository.VideoRepository
 }
 

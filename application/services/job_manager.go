@@ -1,7 +1,7 @@
 package services
 
 import (
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/queue"
 	"dnogueir-org/video-encoder/repository"
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 
 type JobManager struct {
 	Db               *gorm.DB
-	Domain           domain.Job
+	Model            models.Job
 	MessageChannel   chan amqp.Delivery
 	JobReturnChannel chan JobWorkerResult
 	RabbitMQ         *queue.RabbitMQ
@@ -29,7 +29,7 @@ type JobNotificationError struct {
 func NewJobManager(db *gorm.DB, rabbitMQ *queue.RabbitMQ, jobReturnChannel chan JobWorkerResult, messageChannel chan amqp.Delivery) *JobManager {
 	return &JobManager{
 		Db:               db,
-		Domain:           domain.Job{},
+		Model:            models.Job{},
 		MessageChannel:   messageChannel,
 		JobReturnChannel: jobReturnChannel,
 		RabbitMQ:         rabbitMQ,
@@ -52,7 +52,7 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 	}
 
 	for processQuantity := 0; processQuantity < concurrency; processQuantity++ {
-		go JobWorker(jm.MessageChannel, jm.JobReturnChannel, jobService, jm.Domain, processQuantity)
+		go JobWorker(jm.MessageChannel, jm.JobReturnChannel, jobService, jm.Model, processQuantity)
 	}
 
 	for jobResult := range jm.JobReturnChannel {

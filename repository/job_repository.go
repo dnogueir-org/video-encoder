@@ -1,16 +1,16 @@
 package repository
 
 import (
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
 
 type JobRepository interface {
-	Insert(job *domain.Job) (*domain.Job, error)
-	Find(id string) (*domain.Job, error)
-	Update(job *domain.Job) (*domain.Job, error)
+	Insert(job *models.Job) (*models.Job, error)
+	Find(id string) (*models.Job, error)
+	Update(job *models.Job) (*models.Job, error)
 }
 
 type JobRepositoryDb struct {
@@ -21,7 +21,7 @@ func NewJobRepository(db *gorm.DB) *JobRepositoryDb {
 	return &JobRepositoryDb{Db: db}
 }
 
-func (repo JobRepositoryDb) Insert(job *domain.Job) (*domain.Job, error) {
+func (repo JobRepositoryDb) Insert(job *models.Job) (*models.Job, error) {
 
 	err := repo.Db.Create(job).Error
 
@@ -32,9 +32,9 @@ func (repo JobRepositoryDb) Insert(job *domain.Job) (*domain.Job, error) {
 	return job, nil
 }
 
-func (repo JobRepositoryDb) Find(id string) (*domain.Job, error) {
+func (repo JobRepositoryDb) Find(id string) (*models.Job, error) {
 
-	var job domain.Job
+	var job models.Job
 	repo.Db.Preload("Video").First(&job, "id = ?", id)
 
 	if job.ID == "" {
@@ -45,7 +45,7 @@ func (repo JobRepositoryDb) Find(id string) (*domain.Job, error) {
 
 }
 
-func (repo JobRepositoryDb) Update(job *domain.Job) (*domain.Job, error) {
+func (repo JobRepositoryDb) Update(job *models.Job) (*models.Job, error) {
 
 	err := repo.Db.Save(&job).Error
 

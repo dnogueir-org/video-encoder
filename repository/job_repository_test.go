@@ -2,7 +2,7 @@ package repository_test
 
 import (
 	"dnogueir-org/video-encoder/database"
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/repository"
 	"testing"
 	"time"
@@ -15,7 +15,7 @@ func TestJobRepositoryDbInsert(t *testing.T) {
 	db := database.NewDbTest()
 	defer db.Close()
 
-	video := domain.NewVideo()
+	video := models.NewVideo()
 	video.ID = uuid.NewV4().String()
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
@@ -23,7 +23,7 @@ func TestJobRepositoryDbInsert(t *testing.T) {
 	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
-	job, err := domain.NewJob("output_path", "Pending", video)
+	job, err := models.NewJob("output_path", "Pending", video)
 	require.Nil(t, err)
 
 	repoJob := repository.JobRepositoryDb{Db: db}
@@ -40,7 +40,7 @@ func TestJobRepositoryDbUpdate(t *testing.T) {
 	db := database.NewDbTest()
 	defer db.Close()
 
-	video := domain.NewVideo()
+	video := models.NewVideo()
 	video.ID = uuid.NewV4().String()
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
@@ -48,7 +48,7 @@ func TestJobRepositoryDbUpdate(t *testing.T) {
 	repo := repository.VideoRepositoryDb{Db: db}
 	repo.Insert(video)
 
-	job, err := domain.NewJob("output_path", "Pending", video)
+	job, err := models.NewJob("output_path", "Pending", video)
 	require.Nil(t, err)
 
 	repoJob := repository.JobRepositoryDb{Db: db}

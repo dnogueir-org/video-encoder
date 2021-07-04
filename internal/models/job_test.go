@@ -1,7 +1,7 @@
-package domain_test
+package models_test
 
 import (
-	"dnogueir-org/video-encoder/domain"
+	"dnogueir-org/video-encoder/internal/models"
 	"testing"
 	"time"
 
@@ -10,12 +10,12 @@ import (
 )
 
 func TestNewJob(t *testing.T) {
-	video := domain.NewVideo()
+	video := models.NewVideo()
 	video.ID = uuid.NewV4().String()
 	video.FilePath = "path"
 	video.CreatedAt = time.Now()
 
-	job, err := domain.NewJob("path", "Converted", video)
+	job, err := models.NewJob("path", "Converted", video)
 	require.NotNil(t, job)
 	require.Nil(t, err)
 }
