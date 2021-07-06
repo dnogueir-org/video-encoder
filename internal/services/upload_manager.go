@@ -2,14 +2,15 @@ package services
 
 import (
 	"context"
+	"dnogueir-org/video-encoder/internal"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 
 	"cloud.google.com/go/storage"
+	"github.com/sirupsen/logrus"
 )
 
 type VideoUpload struct {
@@ -110,7 +111,9 @@ func (vu *VideoUpload) uploadWorker(in chan int, returnChan chan string, uploadC
 
 		if err != nil {
 			vu.Errors = append(vu.Errors, vu.Paths[x])
-			log.Printf("error during the upload: %v. Error: %v", vu.Paths[x], err)
+			internal.Logger.WithFields(logrus.Fields{
+				"path": vu.Paths[x],
+			}).Error(err.Error())
 			returnChan <- err.Error()
 		}
 

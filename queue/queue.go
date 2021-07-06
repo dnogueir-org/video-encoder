@@ -1,9 +1,10 @@
 package queue
 
 import (
-	"log"
+	"dnogueir-org/video-encoder/internal"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
@@ -76,10 +77,10 @@ func (r *RabbitMQ) Consume(messageChannel chan amqp.Delivery) {
 
 	go func() {
 		for message := range incomingMessage {
-			log.Println("Incoming new message")
+			internal.Logger.Info("Incoming new message")
 			messageChannel <- message
 		}
-		log.Println("RabbitMQ channel closed")
+		internal.Logger.Info("RabbitMQ channel closed")
 		close(messageChannel)
 	}()
 }
@@ -105,6 +106,8 @@ func (r *RabbitMQ) Notify(message string, contentType string, exchange string, r
 
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		internal.Logger.WithFields(log.Fields{
+			"message": msg,
+		}).Error(err.Error())
 	}
 }
