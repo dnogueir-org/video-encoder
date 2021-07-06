@@ -2,7 +2,7 @@ package repository_test
 
 import (
 	"dnogueir-org/video-encoder/database"
-	"dnogueir-org/video-encoder/models"
+	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/repository"
 	"testing"
 	"time"

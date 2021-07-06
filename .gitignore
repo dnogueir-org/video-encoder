@@ -1,3 +1,4 @@
+vendor
 bucket-credential.json
 .env
 .pgdata
