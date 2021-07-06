@@ -97,12 +97,12 @@ func (jm *JobManager) notifySuccess(jobResult JobWorkerResult, ch *amqp.Channel)
 func (jm *JobManager) checkParseErrors(jobResult JobWorkerResult) error {
 	if jobResult.Job.ID != "" {
 		internal.Logger.WithFields(logrus.Fields{
-			"messageID": jobResult.Message.DeliveryTag,
+			"messageId": jobResult.Message.DeliveryTag,
 			"jobId":     jobResult.Job.ID,
 		}).Error(jobResult.Error.Error())
 	} else {
 		internal.Logger.WithFields(logrus.Fields{
-			"messageID": jobResult.Message.DeliveryTag,
+			"messageId": jobResult.Message.DeliveryTag,
 		}).Error(jobResult.Error.Error())
 	}
 
