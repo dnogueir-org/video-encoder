@@ -1,15 +1,16 @@
 package services
 
 import (
+	"dnogueir-org/video-encoder/internal"
 	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/queue"
 	"dnogueir-org/video-encoder/repository"
 	"encoding/json"
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
@@ -48,7 +49,7 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 
 	concurrency, err := strconv.Atoi(os.Getenv("CONCURRENCY_WORKER"))
 	if err != nil {
-		log.Fatalf("error loading var: CONCURRENCY_WORKER")
+		internal.Logger.Fatal("error loading var: CONCURRENCY_WORKER")
 	}
 
 	for processQuantity := 0; processQuantity < concurrency; processQuantity++ {
@@ -95,9 +96,14 @@ func (jm *JobManager) notifySuccess(jobResult JobWorkerResult, ch *amqp.Channel)
 
 func (jm *JobManager) checkParseErrors(jobResult JobWorkerResult) error {
 	if jobResult.Job.ID != "" {
-		log.Printf("messageID: %v. Error passing job: %v. Error: %v", jobResult.Message.DeliveryTag, jobResult.Job.ID, jobResult.Error.Error())
+		internal.Logger.WithFields(logrus.Fields{
+			"messageID": jobResult.Message.DeliveryTag,
+			"jobId":     jobResult.Job.ID,
+		}).Error(jobResult.Error.Error())
 	} else {
-		log.Printf("messageID: %v. Error parsing message: %v", jobResult.Message.DeliveryTag, jobResult.Error)
+		internal.Logger.WithFields(logrus.Fields{
+			"messageID": jobResult.Message.DeliveryTag,
+		}).Error(jobResult.Error.Error())
 	}
 
 	errorMessage := JobNotificationError{

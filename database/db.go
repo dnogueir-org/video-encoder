@@ -1,8 +1,8 @@
 package database
 
 import (
+	"dnogueir-org/video-encoder/internal"
 	"dnogueir-org/video-encoder/internal/models"
-	"log"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -35,7 +35,7 @@ func NewDbTest() *gorm.DB {
 	connection, err := dbInstance.Connect()
 
 	if err != nil {
-		log.Fatalf("Test db error: %v", err)
+		internal.Logger.Fatal(err.Error())
 	}
 
 	return connection

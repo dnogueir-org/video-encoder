@@ -1,8 +1,8 @@
 package services_test
 
 import (
+	"dnogueir-org/video-encoder/internal"
 	"dnogueir-org/video-encoder/internal/services"
-	"log"
 	"os"
 	"testing"
 
@@ -13,7 +13,7 @@ import (
 func init() {
 	err := godotenv.Load("../../.env")
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		internal.Logger.Fatal("Error loading .env file")
 	}
 }
 

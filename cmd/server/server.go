@@ -2,9 +2,9 @@ package main
 
 import (
 	"dnogueir-org/video-encoder/database"
+	"dnogueir-org/video-encoder/internal"
 	"dnogueir-org/video-encoder/internal/services"
 	"dnogueir-org/video-encoder/queue"
-	"log"
 	"os"
 	"strconv"
 
@@ -17,17 +17,17 @@ var db database.Database
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("error loading .env file")
+		internal.Logger.Fatal("error loading .env file")
 	}
 
 	autoMmigrateDb, err := strconv.ParseBool(os.Getenv("AUTO_MIGRATE_DB"))
 	if err != nil {
-		log.Fatalf("error parsing boolean env var")
+		internal.Logger.Fatal("error parsing boolean env var")
 	}
 
 	debug, err := strconv.ParseBool(os.Getenv("DEBUG"))
 	if err != nil {
-		log.Fatalf("error parsing boolean env var")
+		internal.Logger.Fatal("error parsing boolean env var")
 	}
 
 	db.AutoMigrateDb = autoMmigrateDb
@@ -46,7 +46,7 @@ func main() {
 
 	dbConnection, err := db.Connect()
 	if err != nil {
-		log.Fatalf("error connecting to DB")
+		internal.Logger.Fatal("error connecting to DB")
 	}
 
 	defer dbConnection.Close()

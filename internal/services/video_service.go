@@ -2,14 +2,15 @@ package services
 
 import (
 	"context"
+	"dnogueir-org/video-encoder/internal"
 	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/repository"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 
 	"cloud.google.com/go/storage"
+	"github.com/sirupsen/logrus"
 )
 
 type VideoService struct {
@@ -56,7 +57,9 @@ func (v *VideoService) Download(bucketName string) error {
 
 	defer f.Close()
 
-	log.Printf("video %v has been stored", v.Video.ID)
+	internal.Logger.WithFields(logrus.Fields{
+		"videoID": v.Video.ID,
+	}).Info("video has been stored")
 
 	return nil
 }
@@ -108,23 +111,23 @@ func (v *VideoService) Encode() error {
 func (v *VideoService) Finish() error {
 	err := os.Remove(os.Getenv("localStoragePath") + "/" + v.Video.ID + ".mp4")
 	if err != nil {
-		log.Println("error removing mp4 ", v.Video.ID, ".mp4")
+		logVideoError(err, v.Video.ID)
 		return err
 	}
 
 	err = os.Remove(os.Getenv("localStoragePath") + "/" + v.Video.ID + ".frag")
 	if err != nil {
-		log.Println("error removing frag ", v.Video.ID, ".frag")
+		logVideoError(err, v.Video.ID)
 		return err
 	}
 
 	err = os.RemoveAll(os.Getenv("localStoragePath") + "/" + v.Video.ID)
 	if err != nil {
-		log.Println("error removing folder ", v.Video.ID)
+		logVideoError(err, v.Video.ID)
 		return err
 	}
 
-	log.Println("files have been removed")
+	internal.Logger.Info("files have been removed")
 
 	return nil
 
@@ -139,8 +142,14 @@ func (vs *VideoService) InsertVideo() error {
 	return nil
 }
 
+func logVideoError(err error, videoId string) {
+	internal.Logger.WithFields(logrus.Fields{
+		"videoId": videoId,
+	}).Error(err.Error())
+}
+
 func printOutput(out []byte) {
 	if len(out) > 0 {
-		log.Printf("=====> Output: %s\n", string(out))
+		internal.Logger.Info(string(out))
 	}
 }
