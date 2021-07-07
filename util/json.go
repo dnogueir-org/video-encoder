@@ -1,15 +1,19 @@
 package util
 
-import "encoding/json"
+import (
+	"dnogueir-org/video-encoder/internal"
+	"encoding/json"
+)
 
-func IsJson(s string) error {
+func IsJson(s string) bool {
 	var js struct{}
 
 	err := json.Unmarshal([]byte(s), &js)
 
 	if err != nil {
-		return err
+		internal.Logger.WithField("field", s).Error("This is not a json")
+		return false
 	}
 
-	return nil
+	return true
 }

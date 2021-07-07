@@ -12,7 +12,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var db database.Database
+var db *database.Database
 
 func init() {
 	err := godotenv.Load()
@@ -30,19 +30,18 @@ func init() {
 		internal.Logger.Fatal("error parsing boolean env var")
 	}
 
-	db.AutoMigrateDb = autoMmigrateDb
-	db.Debug = debug
-	db.DsnTest = os.Getenv("DSN_TEST")
-	db.Dsn = os.Getenv("DSN")
-	db.DbTypeTest = os.Getenv("DB_TYPE_TEST")
-	db.DbType = os.Getenv("DB_TYPE")
-	db.Env = os.Getenv("ENV")
+	db = database.NewDb(
+		os.Getenv("DSN"),
+		os.Getenv("DB_TYPE"),
+		debug,
+		autoMmigrateDb,
+		os.Getenv("ENV"))
 }
 
 func main() {
 
-	messageChannel := make(chan amqp.Delivery)
-	jobReturnChannel := make(chan services.JobWorkerResult)
+	messageChannel := make(chan amqp.Delivery, 10)
+	jobReturnChannel := make(chan services.JobWorkerResult, 10)
 
 	dbConnection, err := db.Connect()
 	if err != nil {
@@ -58,5 +57,5 @@ func main() {
 	rabbitMQ.Consume(messageChannel)
 
 	jobManager := services.NewJobManager(dbConnection, rabbitMQ, jobReturnChannel, messageChannel)
-	jobManager.Start(ch)
+	jobManager.Start()
 }

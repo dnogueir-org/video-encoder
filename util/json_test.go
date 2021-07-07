@@ -14,10 +14,10 @@ func TestIsJson(t *testing.T) {
 		"status": "downloading"
 	}`
 
-	err := util.IsJson(json)
-	require.Nil(t, err)
+	isJson := util.IsJson(json)
+	require.Equal(t, true, isJson)
 
 	json = `leinad`
-	err = util.IsJson(json)
-	require.NotNil(t, err)
+	isJson = util.IsJson(json)
+	require.Equal(t, false, isJson)
 }
