@@ -4,6 +4,7 @@ import (
 	"dnogueir-org/video-encoder/internal/models"
 	"dnogueir-org/video-encoder/util"
 	"encoding/json"
+	"errors"
 	"os"
 	"sync"
 	"time"
@@ -24,14 +25,14 @@ func JobWorker(messageChannel chan amqp.Delivery, returnChannel chan JobWorkerRe
 
 	for message := range messageChannel {
 
-		err := util.IsJson(string(message.Body))
-		if err != nil {
-			returnChannel <- returnJobResult(models.Job{}, message, err)
+		isJson := util.IsJson(string(message.Body))
+		if isJson == false {
+			returnChannel <- returnJobResult(models.Job{}, message, errors.New("The message is not in json format"))
 			continue
 		}
 
 		Mutex.Lock()
-		err = json.Unmarshal(message.Body, &jobService.VideoService.Video)
+		err := json.Unmarshal(message.Body, &jobService.VideoService.Video)
 		jobService.VideoService.Video.ID = uuid.NewV4().String()
 		Mutex.Unlock()
 

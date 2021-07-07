@@ -37,7 +37,7 @@ func NewJobManager(db *gorm.DB, rabbitMQ *queue.RabbitMQ, jobReturnChannel chan 
 	}
 }
 
-func (jm *JobManager) Start(ch *amqp.Channel) {
+func (jm *JobManager) Start() {
 
 	videoService := NewVideoService()
 	videoService.VideoRepository = repository.VideoRepositoryDb{Db: jm.Db}
@@ -60,7 +60,7 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 		if jobResult.Error != nil {
 			err = jm.checkParseErrors(jobResult)
 		} else {
-			err = jm.notifySuccess(jobResult, ch)
+			err = jm.notifySuccess(jobResult)
 		}
 
 		if err != nil {
@@ -70,11 +70,9 @@ func (jm *JobManager) Start(ch *amqp.Channel) {
 
 }
 
-func (jm *JobManager) notifySuccess(jobResult JobWorkerResult, ch *amqp.Channel) error {
+func (jm *JobManager) notifySuccess(jobResult JobWorkerResult) error {
 
-	Mutex.Lock()
 	jobJson, err := json.Marshal(jobResult.Job)
-	Mutex.Unlock()
 
 	if err != nil {
 		return err

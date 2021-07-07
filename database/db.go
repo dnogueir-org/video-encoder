@@ -10,28 +10,27 @@ import (
 )
 
 type Database struct {
-	Db            *gorm.DB
-	Dsn           string
-	DsnTest       string
-	DbType        string
-	DbTypeTest    string
-	Debug         bool
-	AutoMigrateDb bool
-	Env           string
+	db            *gorm.DB
+	dsn           string
+	dbType        string
+	debug         bool
+	autoMigrateDb bool
+	env           string
 }
 
-func NewDb() *Database {
-	return &Database{}
+func NewDb(dsn string, dbType string, debug bool, autoMigrateDb bool, env string) *Database {
+	return &Database{
+		dsn:           dsn,
+		dbType:        dbType,
+		debug:         debug,
+		autoMigrateDb: autoMigrateDb,
+		env:           env,
+	}
 }
 
 func NewDbTest() *gorm.DB {
-	dbInstance := NewDb()
-	dbInstance.Env = "test"
-	dbInstance.DbTypeTest = "sqlite3"
-	dbInstance.DsnTest = ":memory:"
-	dbInstance.AutoMigrateDb = true
-	dbInstance.Debug = true
 
+	dbInstance := NewDb(":memory:", "sqlite3", true, true, "test")
 	connection, err := dbInstance.Connect()
 
 	if err != nil {
@@ -45,24 +44,18 @@ func (d *Database) Connect() (*gorm.DB, error) {
 
 	var err error
 
-	if d.Env != "test" {
-		d.Db, err = gorm.Open(d.DbType, d.Dsn)
-	} else {
-		d.Db, err = gorm.Open(d.DbTypeTest, d.DsnTest)
-	}
+	d.db, err = gorm.Open(d.dbType, d.dsn)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if d.Debug {
-		d.Db.LogMode(true)
+	d.db.LogMode(d.debug)
+
+	if d.autoMigrateDb {
+		d.db.AutoMigrate(&models.Video{}, &models.Job{})
+		d.db.Model(models.Job{}).AddForeignKey("video_id", "videos (id)", "CASCADE", "CASCADE")
 	}
 
-	if d.AutoMigrateDb {
-		d.Db.AutoMigrate(&models.Video{}, &models.Job{})
-		d.Db.Model(models.Job{}).AddForeignKey("video_id", "videos (id)", "CASCADE", "CASCADE")
-	}
-
-	return d.Db, nil
+	return d.db, nil
 }
